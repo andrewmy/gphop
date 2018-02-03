@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">
+                        Please log in to your Google Account. Nothing is saved on the server.
+                    </p>
+                    <a href="{{ authUrl }}" class="btn btn-primary">
+                        Log in
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

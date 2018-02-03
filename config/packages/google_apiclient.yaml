@@ -1,0 +1,8 @@
+services:
+    Google_Client:
+        class: Google_Client
+        calls:
+            - [setClientId, ['%env(GOOGLE_CLIENT_ID)%']]
+            - [setClientSecret, ['%env(GOOGLE_CLIENT_SECRET)%']]
+            - [setApplicationName, ['%env(GOOGLE_APP_NAME)']]
+            - [setScopes, ['https://picasaweb.google.com/data/']]

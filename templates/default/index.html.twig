@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" action="">
+                        <input type="hidden" name="js" value="{{ hasJs }}" />
+                        <div class="form-group">
+                            <label for="year">Choose the earliest year:</label>
+                            <select id="year" name="year" class="form-control"
+                                    onchange="this.form.js.value=1;this.form.submit()">
+                                {% for year in range(date()|date('Y') - 50, date()|date('Y') - 1)|reverse %}
+                                    <option value="{{ year }}"{% if selectedYear == year %} selected{% endif %}>
+                                        {{ year }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <p><small>Privacy policy: nothing is saved on the server.</small></p>
+                        <button type="submit" class="btn btn-primary">Continue</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ path('logout') }}" class="btn btn-secondary">Log out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if selectedYear %}
+        {% for year, yearPhotos in photos %}
+            <div class="row">
+                <div class="col">
+                    <div class="card year-card">
+                        <div class="card-header">{{ year }}</div>
+                        <div class="card-body">
+                            <div class="grid">
+                                <div class="grid-sizer col-4"></div>
+                                {% for photo in yearPhotos %}
+                                    <div class="grid-item col-4">
+                                        <div class="grid-item-content">
+                                            <a href="{{ photo.link }}"
+                                               title="{{ photo.datetime|date('d.m.Y H:i:s') }} {{ photo.title }}">
+                                                <img src="{{ photo.image }}" class="img-fluid" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <br/><br/>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

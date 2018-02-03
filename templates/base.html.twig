@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}GPHop!{% endblock %}</title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('build/css/app.css') }}" />
+        {% endblock %}
+        {% if google_analytics_id != "" %}
+            <script>
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', 'UA-1931660-8']);
+                _gaq.push(['_trackPageview']);
+                (function() {
+                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                    ga.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+            </script>
+        {% endif %}
+    </head>
+    <body>
+
+        <div class="container">
+            <h1>Google Photo Hop</h1>
+
+            {% if app.request.hasPreviousSession %}
+                {% for type, messages in app.session.flashbag.all() %}
+                    <div class="row">
+                        <div class="col">
+                            <div class="card text-white bg-{{ type }}">
+                                {% for message in messages %}
+                                    <p>{{ message|trans }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block body %}{% endblock %}
+            {% block javascripts %}
+                <script src="{{ asset('build/js/app.js') }}"></script>
+            {% endblock %}
+        </div>
+
+    </body>
+</html>
