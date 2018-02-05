@@ -13,14 +13,14 @@
                         <div class="form-group">
                             <label for="year">Choose the earliest year:</label>
                             <select id="year" name="year" class="form-control js-year">
-                                {% for year in range(date()|date('Y') - env('MAX_YEARS_AGO'), date()|date('Y') - 1)|reverse %}
+                                {% for year in range(date()|date('Y') - max_years_ago, date()|date('Y') - 1)|reverse %}
                                     <option value="{{ year }}"{% if selectedYear == year %} selected{% endif %}>
                                         {{ year }}
                                     </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <p><small>Privacy policy: nothing is saved on the server.</small></p>
+                        <p><small>Privacy policy: nothing is saved on the server except for error logs.</small></p>
                         <button type="submit" class="btn btn-primary">Continue</button>
                     </form>
                 </div>

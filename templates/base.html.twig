@@ -7,15 +7,26 @@
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('build/css/app.css') }}" />
         {% endblock %}
-        {% if env('GOOGLE_ANALYTICS_ID') != "" %}
+        {% if google_analytics_id != "" %}
             <script>
-                var _gaq = _gaq || [];
-                _gaq.push(['_setAccount', {{ env('GOOGLE_ANALYTICS_ID') }}]);
-                _gaq.push(['_trackPageview']);
+                var _gas = _gas || [];
+                _gas.push(['_setAccount', '{{ google_analytics_id }}']);
+                _gas.push(['_setDomainName', '{{ app.request.host }}']);
+                _gas.push(['_require', 'inpage_linkid', '//www.google-analytics.com/plugins/ga/inpage_linkid.js']);
+                _gas.push(['_trackPageview']);
+                _gas.push(['_trackPageLoadTime']);
+                _gas.push(['_gasTrackForms']);
+                _gas.push(['_gasTrackOutboundLinks']);
+
                 (function() {
-                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                    ga.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                    var ga = document.createElement('script');
+                    ga.id = 'gas-script';
+                    ga.setAttribute('data-use-dcjs', 'false');
+                    ga.type = 'text/javascript';
+                    ga.async = true;
+                    ga.src = '//cdnjs.cloudflare.com/ajax/libs/gas/1.11.0/gas.min.js';
+                    var s = document.getElementsByTagName('script')[0];
+                    s.parentNode.insertBefore(ga, s);
                 })();
             </script>
         {% endif %}

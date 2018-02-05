@@ -1,0 +1,8 @@
+main:
+  stage: production
+  host: example.com
+  user: www
+  password: pass
+  http_user: www-data
+  deploy_path: /var/www
+  repository: https://github.com/andrewmy/gphop.git
