@@ -1,5 +1,7 @@
 # Google Photo Hop
 
+This app shows you photos from your Google Photos Auto Backup album on this day from different years.
+
 ## Requirements
 
 * PHP 7.1+
@@ -14,7 +16,3 @@
 3. Add your Client ID and secret to `.env`
 4. `yarn install`
 5. `yarn run encore dev` or `./node_modules/.bin/encore dev`
-
-## TODO
-
-* Ajaxy loading

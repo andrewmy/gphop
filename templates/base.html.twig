@@ -7,10 +7,10 @@
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('build/css/app.css') }}" />
         {% endblock %}
-        {% if google_analytics_id != "" %}
+        {% if env('GOOGLE_ANALYTICS_ID') != "" %}
             <script>
                 var _gaq = _gaq || [];
-                _gaq.push(['_setAccount', 'UA-1931660-8']);
+                _gaq.push(['_setAccount', {{ env('GOOGLE_ANALYTICS_ID') }}]);
                 _gaq.push(['_trackPageview']);
                 (function() {
                     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;

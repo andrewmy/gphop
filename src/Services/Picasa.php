@@ -7,6 +7,7 @@ use App\ValueObject\Photo;
 use GuzzleHttp\Client;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -77,6 +78,14 @@ class Picasa
     }
 
     /**
+     * @return array|null
+     */
+    public function forgetToken()
+    {
+        return $this->session->remove(self::TOKEN_KEY);
+    }
+
+    /**
      * @param Request $request
      *
      * @return array|null
@@ -94,6 +103,27 @@ class Picasa
         }
 
         return $token;
+    }
+
+    /**
+     * @param string|int     $selectedYear
+     * @param \DateTime|null $now
+     *
+     * @return string[]
+     */
+    public function getDateRange($selectedYear, \DateTime $now = null)
+    {
+        if ($now === null) {
+            $now = new \DateTime();
+        }
+
+        $list = [];
+        $day = $now->format('m-d');
+        foreach (\range(\date('Y') - 1, $selectedYear) as $year) {
+            $list[] = $year.'-'.$day;
+        }
+
+        return $list;
     }
 
     /**
@@ -148,6 +178,15 @@ class Picasa
 
         $photos = [];
 
+        if (\mb_strpos($albumLink, 'https://picasaweb.google.com/') !== 0) {
+            throw new AccessDeniedException($albumLink);
+        }
+
+        $diff = $date->diff(new \DateTime())->y;
+        if ($diff > getenv('MAX_YEARS_AGO')) {
+            throw new AccessDeniedException($diff);
+        }
+
         /** @var Client $client */
         $client = $this->googleClient->authorize();
         $response = $client->get(
@@ -167,10 +206,7 @@ class Picasa
                     ->setId($entry->id->__toString())
                     ->setTitle($entry->title->__toString())
                     ->setImage($entry->content->attributes()->src->__toString())
-                    ->setLink($entryLink)
-                    ->setDatetime(new \DateTime(
-                        $entry->published->__toString()
-                    ));
+                    ->setLink($entryLink);
             }
         }
 

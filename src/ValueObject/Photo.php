@@ -2,7 +2,7 @@
 
 namespace App\ValueObject;
 
-class Photo
+class Photo implements \JsonSerializable
 {
     /** @var string */
     protected $id;
@@ -16,8 +16,19 @@ class Photo
     /** @var string */
     protected $link;
 
-    /** @var \DateTime */
-    protected $datetime;
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'image' => $this->getImage(),
+            'link' => $this->getLink(),
+        ];
+    }
+
 
     /**
      * @return string
@@ -95,26 +106,6 @@ class Photo
     public function setLink(string $link): Photo
     {
         $this->link = $link;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDatetime(): \DateTime
-    {
-        return $this->datetime;
-    }
-
-    /**
-     * @param \DateTime $datetime
-     *
-     * @return self
-     */
-    public function setDatetime(\DateTime $datetime): Photo
-    {
-        $this->datetime = $datetime;
 
         return $this;
     }

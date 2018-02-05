@@ -15,6 +15,7 @@
         "build": "encore production"
     },
     "dependencies": {
+        "imagesloaded": "^4.1.4",
         "jquery": "^3.3.1",
         "masonry-layout": "^4.2.1",
         "popper.js": "^1.12.9"

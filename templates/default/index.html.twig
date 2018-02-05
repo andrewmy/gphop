@@ -5,13 +5,15 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <form method="get" action="">
+                    <form method="get" action="{{ path('index') }}"
+                          class="js-date-form"
+                          data-action="{{ path('dates') }}"
+                          data-photos-action="{{ path('datePhotos') }}">
                         <input type="hidden" name="js" value="{{ hasJs }}" />
                         <div class="form-group">
                             <label for="year">Choose the earliest year:</label>
-                            <select id="year" name="year" class="form-control"
-                                    onchange="this.form.js.value=1;this.form.submit()">
-                                {% for year in range(date()|date('Y') - 50, date()|date('Y') - 1)|reverse %}
+                            <select id="year" name="year" class="form-control js-year">
+                                {% for year in range(date()|date('Y') - env('MAX_YEARS_AGO'), date()|date('Y') - 1)|reverse %}
                                     <option value="{{ year }}"{% if selectedYear == year %} selected{% endif %}>
                                         {{ year }}
                                     </option>
@@ -28,6 +30,8 @@
             </div>
         </div>
     </div>
+
+    <div class="js-allphotos-container"></div>
 
     {% if selectedYear %}
         {% for year, yearPhotos in photos %}
@@ -56,4 +60,42 @@
             </div>
         {% endfor %}
     {% endif %}
+
+    <div class="js-template-year d-none">
+        <div class="row">
+            <div class="col">
+                <div class="card year-card">
+                    <div class="card-header">%date%</div>
+                    <div class="card-body">
+                        <div class="grid" data-date="%date%">
+                            <div class="grid-sizer col-4"></div>
+                            %photoHtml%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="js-template-grid-item d-none">
+        <div class="grid-item col-4">
+            <div class="grid-item-content">
+                <a href="%link%" title="%title%">
+                    <img src="%image%" class="img-fluid" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="js-loading-progress" style="display:none">
+        <div class="row">
+            <div class="col">
+                <div class="card year-card">
+                    <div class="card-body">
+                        <!-- message will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

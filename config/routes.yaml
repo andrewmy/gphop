@@ -9,3 +9,11 @@ login:
 logout:
   path: /logout
   controller: App\Controller\DefaultController::logout
+
+dates:
+  path: /dates
+  controller: App\Controller\DefaultController::dates
+
+datePhotos:
+  path: /date_photos
+  controller: App\Controller\DefaultController::datePhotos

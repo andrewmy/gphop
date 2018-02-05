@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Exception\GoogleTokenRefreshException;
 use App\Services\Picasa;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -50,10 +51,11 @@ class DefaultController extends Controller
         $this->picasa = $picasa;
     }
 
-    public function index(Request $request)
+    /**
+     * @return array|null|RedirectResponse
+     */
+    protected function getToken()
     {
-        $hasJs = !empty($request->query->get('js'));
-
         try {
             $token = $this->picasa->getOrRefreshAccessToken();
         } catch (GoogleTokenRefreshException $exception) {
@@ -64,9 +66,26 @@ class DefaultController extends Controller
             return $this->redirectToRoute('login');
         }
 
+        return $token;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function index(Request $request)
+    {
+        $hasJs = !empty($request->query->get('js'));
+
+        $token = $this->getToken();
+        if ($token instanceof RedirectResponse) {
+            return $token;
+        }
+
         $photos = [];
 
-        $selectedYear = $request->query->get('year');
+        $selectedYear = $request->get('year');
         if ($selectedYear) {
             $albumLink = $this->picasa->getAlbumLinkByName('Auto Backup');
 
@@ -76,14 +95,15 @@ class DefaultController extends Controller
                 return $this->logout();
             }
 
-            $day = \date('m-d');
-            foreach (\range(\date('Y') - 1, $selectedYear) as $year) {
-                $key = $year.'-'.$day;
-                $yearPhotos = $this->picasa->getPhotosByDateFromAlbum(
-                    $albumLink, new \DateTime($key)
-                );
-                if (\count($yearPhotos)) {
-                    $photos[$key] = $yearPhotos;
+            if (!$hasJs) {
+                $dates = $this->picasa->getDateRange($selectedYear);
+                foreach ($dates as $year) {
+                    $yearPhotos = $this->picasa->getPhotosByDateFromAlbum(
+                        $albumLink, new \DateTime($year)
+                    );
+                    if (\count($yearPhotos)) {
+                        $photos[$year] = $yearPhotos;
+                    }
                 }
             }
         }
@@ -97,6 +117,11 @@ class DefaultController extends Controller
         );
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function login(Request $request)
     {
         $token = $this->picasa->fetchAccessToken($request);
@@ -116,8 +141,77 @@ class DefaultController extends Controller
      */
     public function logout()
     {
-        $this->session->remove(Picasa::TOKEN_KEY);
+        $this->picasa->forgetToken();
 
         return $this->redirectToRoute('login');
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function dates(Request $request)
+    {
+        $token = $this->getToken();
+        if ($token instanceof RedirectResponse) {
+            return $this->json([
+                'error' => true, 'redirect' => $token->getTargetUrl()
+            ]);
+        }
+
+        $result = [
+            'error' => false, 'message' => null, 'list' => [], 'mainLink' => null,
+        ];
+        $selectedYear = $request->get('year');
+
+        if ($selectedYear) {
+            $albumLink = $this->picasa->getAlbumLinkByName('Auto Backup');
+
+            if (!$albumLink) {
+                $result['error'] = true;
+                $result['message'] = 'Auto Backup album not found';
+
+                return $this->json($result);
+            }
+
+            $result['mainLink'] = $albumLink;
+            $result['list'] = $this->picasa->getDateRange($selectedYear);
+        }
+
+        return $this->json($result);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function datePhotos(Request $request)
+    {
+        $token = $this->getToken();
+        if ($token instanceof RedirectResponse) {
+            return $this->json([
+                'error' => true, 'redirect' => $token->getTargetUrl()
+            ]);
+        }
+
+        $result = ['error' => false, 'message' => null, 'list' => []];
+        $date = $request->get('date');
+        $mainLink = $request->get('mainLink');
+
+        if ($date) {
+            try {
+                $result['list'] = $this->picasa->getPhotosByDateFromAlbum(
+                    $mainLink,
+                    new \DateTime($date)
+                );
+            } catch (\Exception $e) {
+                $result['error'] = true;
+                $result['message'] = 'Loading failed';
+            }
+        }
+
+        return $this->json($result);
     }
 }
