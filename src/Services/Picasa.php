@@ -183,7 +183,7 @@ class Picasa
         }
 
         $diff = $date->diff(new \DateTime())->y;
-        if ($diff > getenv('MAX_YEARS_AGO')) {
+        if ($diff > \getenv('MAX_YEARS_AGO')) {
             throw new AccessDeniedException($diff);
         }
 

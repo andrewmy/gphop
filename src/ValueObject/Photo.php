@@ -29,7 +29,6 @@ class Photo implements \JsonSerializable
         ];
     }
 
-
     /**
      * @return string
      */

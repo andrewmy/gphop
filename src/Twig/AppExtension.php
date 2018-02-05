@@ -7,7 +7,7 @@ class AppExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('env', [$this, 'env'])
+            new \Twig_SimpleFunction('env', [$this, 'env']),
         ];
     }
 
@@ -18,6 +18,6 @@ class AppExtension extends \Twig_Extension
      */
     public function env(string $varName)
     {
-        return getenv($varName);
+        return \getenv($varName);
     }
 }

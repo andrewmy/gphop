@@ -156,7 +156,7 @@ class DefaultController extends Controller
         $token = $this->getToken();
         if ($token instanceof RedirectResponse) {
             return $this->json([
-                'error' => true, 'redirect' => $token->getTargetUrl()
+                'error' => true, 'redirect' => $token->getTargetUrl(),
             ]);
         }
 
@@ -192,7 +192,7 @@ class DefaultController extends Controller
         $token = $this->getToken();
         if ($token instanceof RedirectResponse) {
             return $this->json([
-                'error' => true, 'redirect' => $token->getTargetUrl()
+                'error' => true, 'redirect' => $token->getTargetUrl(),
             ]);
         }
 
