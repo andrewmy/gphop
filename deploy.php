@@ -11,17 +11,18 @@ $prodEnvFile = '.env.prod';
 set('shared_files', [
     '.env',
 ]);
-add('shared_dirs', []);
-add('writable_dirs', []);
+set('shared_dirs', ['var/cache', 'var/log']);
+set('writable_dirs', ['var/cache', 'var/log']);
 set('clear_paths', []);
 set('assets', ['public/build']);
-set('env_vars', 'APP_ENV={{env}}');
+set('env_vars', '');
 set('keep_releases', 3);
 set('default_stage', 'production');
 
 set('ssh_type', 'native');
 set('ssh_multiplexing', true);
 set('writable_mode', 'chmod');
+set('writable_use_sudo', true); // needs a passwordless sudoer
 set('writable_chmod_mode', '0777');
 set('writable_chmod_recursive', true);
 
@@ -122,7 +123,7 @@ task('deploy:install', [
     'deploy:symlink',
     'deploy:www_restart',
     'deploy:unlock',
-    'cleanup',
+    'sudo_cleanup',
 ])->desc('Install your project');
 
 /**
@@ -147,7 +148,7 @@ task('deploy', [
     'deploy:symlink',
     'deploy:www_restart',
     'deploy:unlock',
-    'cleanup',
+    'sudo_cleanup',
 ])->desc('Deploy your project');
 
 after('deploy:install', 'success');

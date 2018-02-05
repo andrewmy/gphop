@@ -19,8 +19,9 @@ This app shows you photos from your Google Photos Auto Backup album on this day 
 
 ## Deployment with Deployer
 
-1. Install [Deployer](https://deployer.org) v4
-2. Create a prod copy of the `.env` file named `.env.prod`
-3. `cp deploy_servers.dist.yml deploy_servers.yml`
-4. Enter your server credentials into `deploy_servers.yml`
-5. `dep deploy:install` the first time, `dep deploy` when updating
+1. Create a passwordless sudoer user
+2. Install [Deployer](https://deployer.org) v4
+3. Create a prod copy of the `.env` file named `.env.prod`
+4. `cp deploy_servers.dist.yml deploy_servers.yml`
+5. Enter your server credentials into `deploy_servers.yml`
+6. `dep deploy:install` the first time, `dep deploy` when updating
