@@ -41,9 +41,9 @@
                         <div class="card-header">{{ year }}</div>
                         <div class="card-body">
                             <div class="grid">
-                                <div class="grid-sizer col-4"></div>
+                                <div class="grid-sizer col-12 col-md-4"></div>
                                 {% for photo in yearPhotos %}
-                                    <div class="grid-item col-4">
+                                    <div class="grid-item col-12 col-md-4">
                                         <div class="grid-item-content">
                                             <a href="{{ photo.link }}"
                                                title="{{ photo.datetime|date('d.m.Y H:i:s') }} {{ photo.title }}">
@@ -68,7 +68,7 @@
                     <div class="card-header">%date%</div>
                     <div class="card-body">
                         <div class="grid" data-date="%date%">
-                            <div class="grid-sizer col-4"></div>
+                            <div class="grid-sizer col-12 col-md-4"></div>
                             %photoHtml%
                         </div>
                     </div>
@@ -78,7 +78,7 @@
     </div>
 
     <div class="js-template-grid-item d-none">
-        <div class="grid-item col-4">
+        <div class="grid-item col-12 col-md-4">
             <div class="grid-item-content">
                 <a href="%link%" title="%title%">
                     <img src="%image%" class="img-fluid" />
